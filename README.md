@@ -1,16 +1,29 @@
-# React + Vite
+# PGen – Prompt Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A clean, modern **Prompt Manager** web application built with **Vite**, **React**, and **Tailwind CSS**.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Sidebar categories** – Filter prompts by category: All, Work, Creative, Technical, Learning, Other
+- **Prompt Cards** – Each card shows a title, category badge, and the full prompt text
+- **One-click Copy** – Copy any prompt to your clipboard instantly
+- **Add Prompts** – Collapsible form at the top to add new prompts with a title, text, and category
+- **Search** – Live search across prompt titles and text
+- **Delete** – Hover over any card and click × to remove it
+- 6 built-in sample prompts to get you started
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+Then open [http://localhost:5173](http://localhost:5173) in your browser.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Build
+
+```bash
+npm run build
+npm run preview
+```
