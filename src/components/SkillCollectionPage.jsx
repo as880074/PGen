@@ -267,9 +267,8 @@ function getCategoryColor(category) {
   return map[category] ?? map.other;
 }
 
-export default function SkillCollectionPage({ locale, skills = [], onAddSkill, onDeleteSkill }) {
+export default function SkillCollectionPage({ locale, skills = [], onAddSkill, onDeleteSkill, searchFilter = '' }) {
   const content = PAGE_CONTENT[locale] ?? PAGE_CONTENT['zh-TW'];
-  const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
   const [platform, setPlatform] = useState('all');
   const [mcpFilter, setMcpFilter] = useState('all');
@@ -316,7 +315,7 @@ export default function SkillCollectionPage({ locale, skills = [], onAddSkill, o
   }, [skills]);
 
   const filteredSkills = useMemo(() => {
-    const keyword = search.trim().toLowerCase();
+    const keyword = searchFilter.trim().toLowerCase();
 
     return skills.filter((skill) => {
       const info = getSkillInfo(skill, locale);
@@ -334,7 +333,7 @@ export default function SkillCollectionPage({ locale, skills = [], onAddSkill, o
 
       return matchesSearch && matchesCategory && matchesPlatform && matchesMcp;
     });
-  }, [category, locale, mcpFilter, platform, search, skills]);
+  }, [category, locale, mcpFilter, platform, searchFilter, skills]);
 
   const handleCopySkillTemplate = async (skill) => {
     const text = buildSkillTemplate(skill, locale);

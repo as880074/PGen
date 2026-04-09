@@ -51,7 +51,7 @@ export default function PromptCard({
         </div>
         <button
           onClick={onDelete}
-          className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-400 transition-all text-lg leading-none mt-0.5"
+          className="text-slate-300 hover:text-red-500 transition-colors text-2xl leading-none p-1 -mt-1 -mr-1"
           title={deleteTitle}
         >
           ×
