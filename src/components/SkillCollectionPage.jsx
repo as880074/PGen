@@ -75,6 +75,20 @@ const PAGE_CONTENT = {
     dependencyTitle: '依賴與需求',
     supportedPlatformsLabel: '支援平台',
     mcpRequirementLabel: 'MCP 需求',
+    exportSkillsLabel: '匯出 skills.json',
+    addSkillLabel: '新增 Skill',
+    addSkillTitle: '新增 Skill 資料',
+    deleteSkillLabel: '刪除 Skill',
+    zhTitleLabel: '中文標題',
+    zhSummaryLabel: '中文摘要',
+    enTitleLabel: '英文標題',
+    enSummaryLabel: '英文摘要',
+    categoryInputLabel: '分類',
+    platformsInputLabel: '平台（逗號分隔）',
+    requiresMcpInputLabel: '需要 MCP',
+    submitSkillLabel: '儲存 Skill',
+    cancelSkillLabel: '取消',
+    formHint: '儲存後會更新目前頁面資料，若要永久保存請按「匯出 skills.json」覆蓋 public/skills.json。',
     installCount: (count) => `安裝 ${count.toLocaleString()} 次`,
     noResultTitle: '找不到符合條件的 Skill',
     noResultSubtitle: '請調整篩選條件或搜尋關鍵字。',
@@ -160,6 +174,20 @@ const PAGE_CONTENT = {
     dependencyTitle: 'Dependencies',
     supportedPlatformsLabel: 'Supported platforms',
     mcpRequirementLabel: 'MCP requirement',
+    exportSkillsLabel: 'Export skills.json',
+    addSkillLabel: 'Add Skill',
+    addSkillTitle: 'Add Skill Entry',
+    deleteSkillLabel: 'Delete skill',
+    zhTitleLabel: 'Chinese title',
+    zhSummaryLabel: 'Chinese summary',
+    enTitleLabel: 'English title',
+    enSummaryLabel: 'English summary',
+    categoryInputLabel: 'Category',
+    platformsInputLabel: 'Platforms (comma-separated)',
+    requiresMcpInputLabel: 'Requires MCP',
+    submitSkillLabel: 'Save skill',
+    cancelSkillLabel: 'Cancel',
+    formHint: 'This updates current in-memory data. Use "Export skills.json" to persist by replacing public/skills.json.',
     installCount: (count) => `${count.toLocaleString()} installs`,
     noResultTitle: 'No matching skills found',
     noResultSubtitle: 'Try changing filters or search keywords.',
@@ -239,7 +267,7 @@ function getCategoryColor(category) {
   return map[category] ?? map.other;
 }
 
-export default function SkillCollectionPage({ locale, skills = [] }) {
+export default function SkillCollectionPage({ locale, skills = [], onAddSkill, onDeleteSkill }) {
   const content = PAGE_CONTENT[locale] ?? PAGE_CONTENT['zh-TW'];
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
@@ -247,6 +275,16 @@ export default function SkillCollectionPage({ locale, skills = [] }) {
   const [mcpFilter, setMcpFilter] = useState('all');
   const [copiedSkillId, setCopiedSkillId] = useState('');
   const [selectedSkill, setSelectedSkill] = useState(null);
+  const [isCreatingSkill, setIsCreatingSkill] = useState(false);
+  const [newSkillForm, setNewSkillForm] = useState({
+    zhTitle: '',
+    zhSummary: '',
+    enTitle: '',
+    enSummary: '',
+    category: 'work',
+    platforms: 'Claude, Gemini',
+    requiresMcp: false,
+  });
 
   useEffect(() => {
     if (!selectedSkill) {
@@ -330,6 +368,70 @@ export default function SkillCollectionPage({ locale, skills = [] }) {
     URL.revokeObjectURL(url);
   };
 
+  const handleExportSkills = () => {
+    const output = JSON.stringify(skills, null, 2);
+    const blob = new Blob([output], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'skills.json';
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleCreateSkill = (event) => {
+    event.preventDefault();
+
+    if (!onAddSkill) {
+      return;
+    }
+
+    const zhTitle = newSkillForm.zhTitle.trim();
+    const zhSummary = newSkillForm.zhSummary.trim();
+    const enTitle = newSkillForm.enTitle.trim();
+    const enSummary = newSkillForm.enSummary.trim();
+    const platforms = newSkillForm.platforms
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    if (!zhTitle || !zhSummary || !enTitle || !enSummary || platforms.length === 0) {
+      return;
+    }
+
+    onAddSkill({
+      idHint: enTitle,
+      category: newSkillForm.category,
+      platforms,
+      requiresMcp: newSkillForm.requiresMcp,
+      rating: 0,
+      installs: 0,
+      translations: {
+        'zh-TW': {
+          title: zhTitle,
+          summary: zhSummary,
+        },
+        en: {
+          title: enTitle,
+          summary: enSummary,
+        },
+      },
+    });
+
+    setIsCreatingSkill(false);
+    setNewSkillForm({
+      zhTitle: '',
+      zhSummary: '',
+      enTitle: '',
+      enSummary: '',
+      category: 'work',
+      platforms: 'Claude, Gemini',
+      requiresMcp: false,
+    });
+  };
+
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-blue-50 p-6 shadow-sm">
@@ -349,10 +451,107 @@ export default function SkillCollectionPage({ locale, skills = [] }) {
             <h3 className="text-base font-semibold text-slate-800">{content.marketplaceTitle}</h3>
             <p className="mt-1 text-sm text-slate-500">{content.marketplaceSubtitle}</p>
           </div>
-          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-            {filteredSkills.length} / {skills.length}
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+              {filteredSkills.length} / {skills.length}
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsCreatingSkill((prev) => !prev)}
+              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-800"
+            >
+              {content.addSkillLabel}
+            </button>
+            <button
+              type="button"
+              onClick={handleExportSkills}
+              className="rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-700"
+            >
+              {content.exportSkillsLabel}
+            </button>
+          </div>
         </div>
+
+        {isCreatingSkill ? (
+          <form onSubmit={handleCreateSkill} className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <h4 className="text-sm font-semibold text-slate-800">{content.addSkillTitle}</h4>
+            <p className="mt-1 text-xs text-slate-500">{content.formHint}</p>
+
+            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+              <input
+                type="text"
+                value={newSkillForm.zhTitle}
+                onChange={(e) => setNewSkillForm((prev) => ({ ...prev, zhTitle: e.target.value }))}
+                placeholder={content.zhTitleLabel}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-200"
+              />
+              <input
+                type="text"
+                value={newSkillForm.enTitle}
+                onChange={(e) => setNewSkillForm((prev) => ({ ...prev, enTitle: e.target.value }))}
+                placeholder={content.enTitleLabel}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-200"
+              />
+              <input
+                type="text"
+                value={newSkillForm.zhSummary}
+                onChange={(e) => setNewSkillForm((prev) => ({ ...prev, zhSummary: e.target.value }))}
+                placeholder={content.zhSummaryLabel}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-200"
+              />
+              <input
+                type="text"
+                value={newSkillForm.enSummary}
+                onChange={(e) => setNewSkillForm((prev) => ({ ...prev, enSummary: e.target.value }))}
+                placeholder={content.enSummaryLabel}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-200"
+              />
+              <select
+                value={newSkillForm.category}
+                onChange={(e) => setNewSkillForm((prev) => ({ ...prev, category: e.target.value }))}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-200"
+              >
+                {Object.keys(content.categories).map((key) => (
+                  <option key={key} value={key}>
+                    {content.categoryInputLabel}: {content.categories[key]}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                value={newSkillForm.platforms}
+                onChange={(e) => setNewSkillForm((prev) => ({ ...prev, platforms: e.target.value }))}
+                placeholder={content.platformsInputLabel}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-200"
+              />
+            </div>
+
+            <label className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-slate-600">
+              <input
+                type="checkbox"
+                checked={newSkillForm.requiresMcp}
+                onChange={(e) => setNewSkillForm((prev) => ({ ...prev, requiresMcp: e.target.checked }))}
+              />
+              {content.requiresMcpInputLabel}
+            </label>
+
+            <div className="mt-3 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setIsCreatingSkill(false)}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-800"
+              >
+                {content.cancelSkillLabel}
+              </button>
+              <button
+                type="submit"
+                className="rounded-lg bg-violet-600 px-3 py-2 text-xs font-semibold text-white hover:bg-violet-700"
+              >
+                {content.submitSkillLabel}
+              </button>
+            </div>
+          </form>
+        ) : null}
 
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
           <input
@@ -419,9 +618,21 @@ export default function SkillCollectionPage({ locale, skills = [] }) {
                       <h4 className="text-sm font-semibold text-slate-800">{info.title}</h4>
                       <p className="mt-1 text-xs leading-relaxed text-slate-500">{info.summary}</p>
                     </div>
-                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${getCategoryColor(skill.category)}`}>
-                      {content.categories[skill.category] ?? skill.category}
-                    </span>
+                    <div className="flex items-start gap-2">
+                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${getCategoryColor(skill.category)}`}>
+                        {content.categories[skill.category] ?? skill.category}
+                      </span>
+                      {onDeleteSkill ? (
+                        <button
+                          type="button"
+                          title={content.deleteSkillLabel}
+                          onClick={() => onDeleteSkill(skill.id)}
+                          className="rounded-md border border-red-100 px-2 py-0.5 text-[11px] font-semibold text-red-500 hover:bg-red-50"
+                        >
+                          ×
+                        </button>
+                      ) : null}
+                    </div>
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-1.5">

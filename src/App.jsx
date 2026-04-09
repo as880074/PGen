@@ -22,6 +22,14 @@ function getNextPromptId(promptList) {
   return Math.max(...promptList.map((prompt) => Number(prompt.id) || 0)) + 1;
 }
 
+function slugifySkillId(value) {
+  return String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+}
+
 export default function App() {
   const [prompts, setPrompts] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
@@ -158,6 +166,32 @@ export default function App() {
     setPrompts((prev) => prev.filter((p) => p.id !== id));
   };
 
+  const handleAddSkill = (newSkill) => {
+    setSkills((prev) => {
+      const existingIds = new Set(prev.map((item) => item.id));
+      const baseId = slugifySkillId(newSkill.idHint || newSkill.translations?.en?.title || newSkill.translations?.['zh-TW']?.title || `skill-${Date.now()}`) || `skill-${Date.now()}`;
+      let nextId = baseId;
+      let suffix = 2;
+
+      while (existingIds.has(nextId)) {
+        nextId = `${baseId}-${suffix}`;
+        suffix += 1;
+      }
+
+      return [
+        {
+          ...newSkill,
+          id: nextId,
+        },
+        ...prev,
+      ];
+    });
+  };
+
+  const handleDeleteSkill = (id) => {
+    setSkills((prev) => prev.filter((item) => item.id !== id));
+  };
+
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-700">
       <Sidebar
@@ -249,13 +283,13 @@ export default function App() {
               <div className="text-center py-24 text-red-500">
                 <p className="font-medium">{messages.loadSkillsFailed}</p>
               </div>
-            ) : skills.length === 0 ? (
-              <div className="text-center py-24 text-slate-400">
-                <p className="font-medium">{messages.emptySkillsTitle}</p>
-                <p className="text-sm mt-1">{messages.emptySkillsSubtitle}</p>
-              </div>
             ) : (
-              <SkillCollectionPage locale={locale} skills={skills} />
+              <SkillCollectionPage
+                locale={locale}
+                onAddSkill={handleAddSkill}
+                onDeleteSkill={handleDeleteSkill}
+                skills={skills}
+              />
             )
           ) : (
             <>
