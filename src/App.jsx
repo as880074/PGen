@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import PromptCard from './components/PromptCard';
 import AddPromptForm from './components/AddPromptForm';
+import SkillCollectionPage from './components/SkillCollectionPage';
 import {
   DEFAULT_LOCALE,
   LOCALES,
@@ -25,6 +26,7 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [search, setSearch] = useState('');
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
+  const [activePage, setActivePage] = useState('prompts');
   const [isLoadingPrompts, setIsLoadingPrompts] = useState(true);
   const [hasLoadPromptsError, setHasLoadPromptsError] = useState(false);
 
@@ -129,72 +131,111 @@ export default function App() {
         <header className="shrink-0 px-8 py-5 bg-white border-b border-slate-200 flex items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-bold text-slate-800">
-              {getCategoryLabel(locale, activeCategory)}
+              {activePage === 'prompts'
+                ? getCategoryLabel(locale, activeCategory)
+                : messages.skillCollectionPageTitle}
             </h2>
             <p className="text-xs text-slate-400">
-              {messages.countSummary(filteredPrompts.length, Boolean(search))}
+              {activePage === 'prompts'
+                ? messages.countSummary(filteredPrompts.length, Boolean(search))
+                : messages.skillCollectionPageSubtitle}
             </p>
           </div>
-          <div className="relative max-w-xs w-full">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 pointer-events-none"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
-              />
-            </svg>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={messages.searchPlaceholder}
-              className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-slate-50 placeholder:text-slate-300"
-            />
+          <div className="flex items-center gap-3 w-full max-w-md justify-end">
+            <div className="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1">
+              <button
+                type="button"
+                onClick={() => setActivePage('prompts')}
+                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  activePage === 'prompts'
+                    ? 'bg-white text-violet-700 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                {messages.promptLibraryTab}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActivePage('skills')}
+                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  activePage === 'skills'
+                    ? 'bg-white text-violet-700 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                {messages.skillCollectionTab}
+              </button>
+            </div>
+
+            {activePage === 'prompts' ? (
+              <div className="relative max-w-xs w-full">
+                <svg
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 pointer-events-none"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+                  />
+                </svg>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder={messages.searchPlaceholder}
+                  className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-slate-50 placeholder:text-slate-300"
+                />
+              </div>
+            ) : null}
           </div>
         </header>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-8 py-6 space-y-5">
-          <AddPromptForm
-            categoryLabels={messages.categories}
-            messages={messages}
-            onAdd={handleAdd}
-          />
-
-          {isLoadingPrompts ? (
-            <div className="text-center py-24 text-slate-400">
-              <p className="font-medium">{messages.loadingPrompts}</p>
-            </div>
-          ) : hasLoadPromptsError ? (
-            <div className="text-center py-24 text-red-500">
-              <p className="font-medium">{messages.loadPromptsFailed}</p>
-            </div>
-          ) : filteredPrompts.length === 0 ? (
-            <div className="text-center py-24 text-slate-400">
-              <div className="text-5xl mb-4">🔍</div>
-              <p className="font-medium">{messages.emptyTitle}</p>
-              <p className="text-sm mt-1">{messages.emptySubtitle}</p>
-            </div>
+          {activePage === 'skills' ? (
+            <SkillCollectionPage locale={locale} />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filteredPrompts.map((prompt) => (
-                <PromptCard
-                  categoryLabel={getCategoryLabel(locale, prompt.category)}
-                  copyLabel={messages.copyLabel}
-                  copiedLabel={messages.copiedLabel}
-                  deleteTitle={messages.deletePromptTitle}
-                  key={prompt.id}
-                  prompt={prompt}
-                  onDelete={() => handleDelete(prompt.id)}
-                />
-              ))}
-            </div>
+            <>
+              <AddPromptForm
+                categoryLabels={messages.categories}
+                messages={messages}
+                onAdd={handleAdd}
+              />
+
+              {isLoadingPrompts ? (
+                <div className="text-center py-24 text-slate-400">
+                  <p className="font-medium">{messages.loadingPrompts}</p>
+                </div>
+              ) : hasLoadPromptsError ? (
+                <div className="text-center py-24 text-red-500">
+                  <p className="font-medium">{messages.loadPromptsFailed}</p>
+                </div>
+              ) : filteredPrompts.length === 0 ? (
+                <div className="text-center py-24 text-slate-400">
+                  <div className="text-5xl mb-4">🔍</div>
+                  <p className="font-medium">{messages.emptyTitle}</p>
+                  <p className="text-sm mt-1">{messages.emptySubtitle}</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {filteredPrompts.map((prompt) => (
+                    <PromptCard
+                      categoryLabel={getCategoryLabel(locale, prompt.category)}
+                      copyLabel={messages.copyLabel}
+                      copiedLabel={messages.copiedLabel}
+                      deleteTitle={messages.deletePromptTitle}
+                      key={prompt.id}
+                      prompt={prompt}
+                      onDelete={() => handleDelete(prompt.id)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>

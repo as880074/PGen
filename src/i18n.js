@@ -38,6 +38,10 @@ const MESSAGES = {
     copiedLabel: '已複製',
     loadingPrompts: '正在載入提示詞...',
     loadPromptsFailed: '載入提示詞失敗，請稍後再試',
+    promptLibraryTab: '提示詞庫',
+    skillCollectionTab: 'Skill 收集',
+    skillCollectionPageTitle: 'Skill 收集頁',
+    skillCollectionPageSubtitle: '探索 Agent Skill 介紹與分享網站規格草案',
   },
   en: {
     categories: {
@@ -71,6 +75,10 @@ const MESSAGES = {
     copiedLabel: 'Copied!',
     loadingPrompts: 'Loading prompts...',
     loadPromptsFailed: 'Failed to load prompts. Please try again later.',
+    promptLibraryTab: 'Prompt Library',
+    skillCollectionTab: 'Skill Collection',
+    skillCollectionPageTitle: 'Skill Collection',
+    skillCollectionPageSubtitle: 'Agent Skill overview and sharing platform draft',
   },
 };
 
