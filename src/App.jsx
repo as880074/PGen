@@ -4,26 +4,75 @@ import PromptCard from './components/PromptCard';
 import AddPromptForm from './components/AddPromptForm';
 import {
   DEFAULT_LOCALE,
-  DEFAULT_PROMPTS,
   LOCALES,
   getCategoryLabel,
   getLocalizedPrompt,
   getMessages,
 } from './i18n';
 
-let nextId = DEFAULT_PROMPTS.length + 1;
+const PROMPTS_JSON_PATH = `${import.meta.env.BASE_URL}prompts.json`;
+
+function getNextPromptId(promptList) {
+  if (promptList.length === 0) {
+    return 1;
+  }
+
+  return Math.max(...promptList.map((prompt) => Number(prompt.id) || 0)) + 1;
+}
 
 export default function App() {
-  const [prompts, setPrompts] = useState(DEFAULT_PROMPTS);
+  const [prompts, setPrompts] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
   const [search, setSearch] = useState('');
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
+  const [isLoadingPrompts, setIsLoadingPrompts] = useState(true);
+  const [hasLoadPromptsError, setHasLoadPromptsError] = useState(false);
 
   const messages = useMemo(() => getMessages(locale), [locale]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadPrompts() {
+      try {
+        setIsLoadingPrompts(true);
+        setHasLoadPromptsError(false);
+
+        const response = await fetch(PROMPTS_JSON_PATH);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid prompt JSON format');
+        }
+
+        if (isActive) {
+          setPrompts(data);
+        }
+      } catch {
+        if (isActive) {
+          setHasLoadPromptsError(true);
+          setPrompts([]);
+        }
+      } finally {
+        if (isActive) {
+          setIsLoadingPrompts(false);
+        }
+      }
+    }
+
+    loadPrompts();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   const localizedPrompts = useMemo(
     () => prompts.map((prompt) => getLocalizedPrompt(prompt, locale)),
@@ -49,7 +98,14 @@ export default function App() {
   }, [localizedPrompts, activeCategory, search]);
 
   const handleAdd = (newPrompt) => {
-    setPrompts((prev) => [{ ...newPrompt, id: nextId++, type: 'custom' }, ...prev]);
+    setPrompts((prev) => [
+      {
+        ...newPrompt,
+        id: getNextPromptId(prev),
+        type: 'custom',
+      },
+      ...prev,
+    ]);
   };
 
   const handleDelete = (id) => {
@@ -111,7 +167,15 @@ export default function App() {
             onAdd={handleAdd}
           />
 
-          {filteredPrompts.length === 0 ? (
+          {isLoadingPrompts ? (
+            <div className="text-center py-24 text-slate-400">
+              <p className="font-medium">{messages.loadingPrompts}</p>
+            </div>
+          ) : hasLoadPromptsError ? (
+            <div className="text-center py-24 text-red-500">
+              <p className="font-medium">{messages.loadPromptsFailed}</p>
+            </div>
+          ) : filteredPrompts.length === 0 ? (
             <div className="text-center py-24 text-slate-400">
               <div className="text-5xl mb-4">🔍</div>
               <p className="font-medium">{messages.emptyTitle}</p>
