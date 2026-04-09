@@ -19,6 +19,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Workflow fingerprint
+        run: echo "deploy-pages-gh-pages-mode-v2"
+
       - name: Checkout
         uses: actions/checkout@v4
 
