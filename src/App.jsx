@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar';
 import PromptCard from './components/PromptCard';
 import AddPromptForm from './components/AddPromptForm';
 import SkillCollectionPage from './components/SkillCollectionPage';
+import BMADWorkshop from './components/BMADWorkshop';
 import {
   DEFAULT_LOCALE,
   LOCALES,
@@ -239,12 +240,16 @@ export default function App() {
               <h2 className="text-lg font-bold text-slate-800 leading-none">
                 {activePage === 'prompts'
                   ? getCategoryLabel(locale, activeCategory)
-                  : messages.skillCollectionPageTitle}
+                  : activePage === 'skills'
+                  ? messages.skillCollectionPageTitle
+                  : messages.bmadPageTitle}
               </h2>
               <p className="text-[11px] text-slate-400 mt-1 uppercase tracking-wider font-medium">
                 {activePage === 'prompts'
                   ? messages.countSummary(filteredPrompts.length, Boolean(search))
-                  : messages.skillCollectionPageSubtitle}
+                  : activePage === 'skills'
+                  ? messages.skillCollectionPageSubtitle
+                  : messages.bmadPageSubtitle}
               </p>
             </div>
           </div>
@@ -273,6 +278,17 @@ export default function App() {
               >
                 {messages.skillCollectionTab}
               </button>
+              <button
+                type="button"
+                onClick={() => setActivePage('bmad')}
+                className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
+                  activePage === 'bmad'
+                    ? 'bg-white text-violet-700 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                {messages.bmadWorkshopTab}
+              </button>
             </div>
 
             <div className="relative flex-1 max-w-xs">
@@ -297,7 +313,9 @@ export default function App() {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
-          {activePage === 'skills' ? (
+          {activePage === 'bmad' ? (
+            <BMADWorkshop locale={locale} messages={messages} />
+          ) : activePage === 'skills' ? (
             isLoadingSkills ? (
               <div className="flex items-center justify-center py-24 text-slate-400">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500 mr-3"></div>
