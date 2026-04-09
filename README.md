@@ -43,6 +43,24 @@ npm run build
 npm run preview
 ```
 
+## GitHub Pages 自動部署
+
+此專案已包含 GitHub Actions workflow：
+
+- [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml)
+
+啟用方式：
+
+1. 將專案推到 GitHub，並確認預設分支為 `main`
+2. 到 GitHub Repository 的 `Settings` -> `Pages`
+3. 在 `Build and deployment` 的 `Source` 選擇 `GitHub Actions`
+4. 之後每次 push 到 `main`，會自動建置並部署到 GitHub Pages
+
+說明：
+
+- 若倉庫名稱是 `username.github.io`，會用 `/` 當作 Vite base
+- 其他倉庫會自動使用 `/<repo-name>/` 當作 Vite base
+
 ## 語系設計
 
 - 介面文字集中在 `src/i18n.js`
