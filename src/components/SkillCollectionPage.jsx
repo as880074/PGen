@@ -1,116 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 
-const SKILLS = [
-  {
-    id: 'meeting-summarizer',
-    category: 'work',
-    platforms: ['Claude', 'Gemini', 'Cursor'],
-    requiresMcp: false,
-    rating: 4.8,
-    installs: 1820,
-    translations: {
-      'zh-TW': {
-        title: '會議紀錄整理 Skill',
-        summary: '把逐字稿轉成重點摘要、行動項目與責任分工。',
-      },
-      en: {
-        title: 'Meeting Summarizer Skill',
-        summary: 'Turn transcripts into summary, action items, and owners.',
-      },
-    },
-  },
-  {
-    id: 'email-rewriter',
-    category: 'work',
-    platforms: ['Gemini', 'OpenAI CLI', 'Claude'],
-    requiresMcp: false,
-    rating: 4.6,
-    installs: 1465,
-    translations: {
-      'zh-TW': {
-        title: '商務 Email 重寫 Skill',
-        summary: '依對象與語氣規則，快速輸出可寄送的商務郵件版本。',
-      },
-      en: {
-        title: 'Business Email Rewrite Skill',
-        summary: 'Generate send-ready emails with audience and tone constraints.',
-      },
-    },
-  },
-  {
-    id: 'social-post-remix',
-    category: 'creative',
-    platforms: ['Claude', 'Gemini', 'Windsurf'],
-    requiresMcp: false,
-    rating: 4.7,
-    installs: 2012,
-    translations: {
-      'zh-TW': {
-        title: '社群貼文改寫 Skill',
-        summary: '將長文轉為多平台貼文，並提供 Hook、CTA 與留言關鍵字。',
-      },
-      en: {
-        title: 'Social Post Remix Skill',
-        summary: 'Convert long-form text into platform-native posts with hooks and CTA.',
-      },
-    },
-  },
-  {
-    id: 'notion-research-sync',
-    category: 'technical',
-    platforms: ['Claude', 'Cursor', 'OpenAI CLI'],
-    requiresMcp: true,
-    rating: 4.9,
-    installs: 938,
-    translations: {
-      'zh-TW': {
-        title: 'Notion 研究同步 Skill',
-        summary: '透過 MCP 讀取知識庫，自動生成研究摘要與追蹤清單。',
-      },
-      en: {
-        title: 'Notion Research Sync Skill',
-        summary: 'Use MCP to read workspace notes and generate research digests.',
-      },
-    },
-  },
-  {
-    id: 'data-cleanup-assistant',
-    category: 'technical',
-    platforms: ['Gemini', 'OpenAI CLI', 'Cursor'],
-    requiresMcp: true,
-    rating: 4.5,
-    installs: 756,
-    translations: {
-      'zh-TW': {
-        title: '資料清理助手 Skill',
-        summary: '針對 CSV/試算表做欄位標準化、缺漏檢查與品質報告。',
-      },
-      en: {
-        title: 'Data Cleanup Assistant Skill',
-        summary: 'Normalize tabular data and produce data-quality checks.',
-      },
-    },
-  },
-  {
-    id: 'learning-coach',
-    category: 'learning',
-    platforms: ['Claude', 'Gemini', 'Cursor', 'Windsurf'],
-    requiresMcp: false,
-    rating: 4.4,
-    installs: 1672,
-    translations: {
-      'zh-TW': {
-        title: '學習教練 Skill',
-        summary: '把大主題拆成學習路線，含提問模板與每週練習計畫。',
-      },
-      en: {
-        title: 'Learning Coach Skill',
-        summary: 'Break large topics into a guided roadmap and practice loops.',
-      },
-    },
-  },
-];
-
 const PAGE_CONTENT = {
   'zh-TW': {
     badge: 'Agent Skill 專題頁',
@@ -284,20 +173,36 @@ const PAGE_CONTENT = {
   },
 };
 
-function buildSkillTemplate(skill, locale) {
-  const info = skill.translations[locale] ?? skill.translations['zh-TW'];
+function getSkillInfo(skill, locale) {
+  const fallback = { title: 'Untitled Skill', summary: '' };
 
-  return `# SKILL.md\n\n## Name\n${info.title}\n\n## Trigger\n- Use when task matches: [define scenario]\n\n## Tools\n- Platforms: ${skill.platforms.join(', ')}\n- MCP required: ${skill.requiresMcp ? 'yes' : 'no'}\n\n## SOP\n1. Gather input context\n2. Validate constraints\n3. Generate structured output\n4. Ask for one refinement round\n\n## Output Format\n- Bullet summary\n- Action items\n- Next prompt recommendations\n`;
+  if (!skill || !skill.translations) {
+    return fallback;
+  }
+
+  return skill.translations[locale] ?? skill.translations['zh-TW'] ?? fallback;
+}
+
+function getSkillPlatforms(skill) {
+  return Array.isArray(skill?.platforms) ? skill.platforms : [];
+}
+
+function buildSkillTemplate(skill, locale) {
+  const info = getSkillInfo(skill, locale);
+  const platforms = getSkillPlatforms(skill);
+
+  return `# SKILL.md\n\n## Name\n${info.title}\n\n## Trigger\n- Use when task matches: [define scenario]\n\n## Tools\n- Platforms: ${platforms.join(', ')}\n- MCP required: ${skill.requiresMcp ? 'yes' : 'no'}\n\n## SOP\n1. Gather input context\n2. Validate constraints\n3. Generate structured output\n4. Ask for one refinement round\n\n## Output Format\n- Bullet summary\n- Action items\n- Next prompt recommendations\n`;
 }
 
 function getPtcf(skill, locale) {
-  const info = skill.translations[locale] ?? skill.translations['zh-TW'];
+  const info = getSkillInfo(skill, locale);
+  const platforms = getSkillPlatforms(skill);
 
   if (locale === 'zh-TW') {
     return {
       persona: `你是「${info.title}」的專業任務助理，需遵守格式與品質規範。`,
       task: `根據輸入內容執行 ${info.title}，產出可直接使用的結果。`,
-      context: `分類為「${skill.category}」，支援平台：${skill.platforms.join('、')}，MCP 需求：${skill.requiresMcp ? '需要' : '不需要'}。`,
+      context: `分類為「${skill.category}」，支援平台：${platforms.join('、')}，MCP 需求：${skill.requiresMcp ? '需要' : '不需要'}。`,
       format: '輸出需包含：重點摘要、可執行清單、下一步建議，必要時標註資料依據。',
     };
   }
@@ -305,7 +210,7 @@ function getPtcf(skill, locale) {
   return {
     persona: `You are a specialist assistant for "${info.title}" with strict quality and formatting discipline.`,
     task: `Execute ${info.title} from user input and produce an output that can be used immediately.`,
-    context: `Category: ${skill.category}. Platforms: ${skill.platforms.join(', ')}. MCP: ${skill.requiresMcp ? 'required' : 'not required'}.`,
+    context: `Category: ${skill.category}. Platforms: ${platforms.join(', ')}. MCP: ${skill.requiresMcp ? 'required' : 'not required'}.`,
     format: 'Return: concise summary, executable checklist, and next-step suggestions, with evidence notes when needed.',
   };
 }
@@ -334,7 +239,7 @@ function getCategoryColor(category) {
   return map[category] ?? map.other;
 }
 
-export default function SkillCollectionPage({ locale }) {
+export default function SkillCollectionPage({ locale, skills = [] }) {
   const content = PAGE_CONTENT[locale] ?? PAGE_CONTENT['zh-TW'];
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
@@ -364,24 +269,26 @@ export default function SkillCollectionPage({ locale }) {
   const platformOptions = useMemo(() => {
     const values = new Set();
 
-    SKILLS.forEach((skill) => {
-      skill.platforms.forEach((item) => values.add(item));
+    skills.forEach((skill) => {
+      const platforms = getSkillPlatforms(skill);
+      platforms.forEach((item) => values.add(item));
     });
 
     return [...values].sort();
-  }, []);
+  }, [skills]);
 
   const filteredSkills = useMemo(() => {
     const keyword = search.trim().toLowerCase();
 
-    return SKILLS.filter((skill) => {
-      const info = skill.translations[locale] ?? skill.translations['zh-TW'];
+    return skills.filter((skill) => {
+      const info = getSkillInfo(skill, locale);
+      const platforms = getSkillPlatforms(skill);
       const matchesSearch =
         !keyword ||
         info.title.toLowerCase().includes(keyword) ||
         info.summary.toLowerCase().includes(keyword);
       const matchesCategory = category === 'all' || skill.category === category;
-      const matchesPlatform = platform === 'all' || skill.platforms.includes(platform);
+      const matchesPlatform = platform === 'all' || platforms.includes(platform);
       const matchesMcp =
         mcpFilter === 'all' ||
         (mcpFilter === 'required' && skill.requiresMcp) ||
@@ -389,7 +296,7 @@ export default function SkillCollectionPage({ locale }) {
 
       return matchesSearch && matchesCategory && matchesPlatform && matchesMcp;
     });
-  }, [category, locale, mcpFilter, platform, search]);
+  }, [category, locale, mcpFilter, platform, search, skills]);
 
   const handleCopySkillTemplate = async (skill) => {
     const text = buildSkillTemplate(skill, locale);
@@ -443,7 +350,7 @@ export default function SkillCollectionPage({ locale }) {
             <p className="mt-1 text-sm text-slate-500">{content.marketplaceSubtitle}</p>
           </div>
           <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-            {filteredSkills.length} / {SKILLS.length}
+            {filteredSkills.length} / {skills.length}
           </span>
         </div>
 
@@ -501,8 +408,9 @@ export default function SkillCollectionPage({ locale }) {
         ) : (
           <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
             {filteredSkills.map((skill) => {
-              const info = skill.translations[locale] ?? skill.translations['zh-TW'];
+              const info = getSkillInfo(skill, locale);
               const copied = copiedSkillId === skill.id;
+              const platforms = getSkillPlatforms(skill);
 
               return (
                 <article key={skill.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -517,7 +425,7 @@ export default function SkillCollectionPage({ locale }) {
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {skill.platforms.map((item) => (
+                    {platforms.map((item) => (
                       <span key={item} className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-600">
                         {item}
                       </span>
@@ -528,8 +436,8 @@ export default function SkillCollectionPage({ locale }) {
                   </div>
 
                   <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-                    <span>★ {skill.rating.toFixed(1)}</span>
-                    <span>{content.installCount(skill.installs)}</span>
+                    <span>★ {Number(skill.rating || 0).toFixed(1)}</span>
+                    <span>{content.installCount(Number(skill.installs || 0))}</span>
                   </div>
 
                   <div className="mt-3 grid grid-cols-2 gap-2">
@@ -599,10 +507,10 @@ export default function SkillCollectionPage({ locale }) {
                   {content.detailTitle}
                 </p>
                 <h3 className="mt-1 text-xl font-bold text-slate-800">
-                  {(selectedSkill.translations[locale] ?? selectedSkill.translations['zh-TW']).title}
+                  {getSkillInfo(selectedSkill, locale).title}
                 </h3>
                 <p className="mt-1 text-sm text-slate-500">
-                  {(selectedSkill.translations[locale] ?? selectedSkill.translations['zh-TW']).summary}
+                  {getSkillInfo(selectedSkill, locale).summary}
                 </p>
               </div>
               <button
@@ -647,7 +555,7 @@ export default function SkillCollectionPage({ locale }) {
                 <div className="mt-3 space-y-2 text-sm text-slate-600">
                   <p>
                     <span className="font-semibold text-slate-700">{content.supportedPlatformsLabel}:</span>{' '}
-                    {selectedSkill.platforms.join(', ')}
+                    {getSkillPlatforms(selectedSkill).join(', ')}
                   </p>
                   <p>
                     <span className="font-semibold text-slate-700">{content.mcpRequirementLabel}:</span>{' '}
@@ -659,7 +567,7 @@ export default function SkillCollectionPage({ locale }) {
               <article className="rounded-xl border border-slate-200 p-4">
                 <h4 className="text-sm font-semibold text-slate-800">{content.installGuideTitle}</h4>
                 <ul className="mt-3 space-y-2 text-xs text-slate-600">
-                  {selectedSkill.platforms.map((item) => (
+                  {getSkillPlatforms(selectedSkill).map((item) => (
                     <li key={item}>
                       <span className="font-semibold text-slate-700">{item}</span>: {getInstallPath(item)}
                     </li>

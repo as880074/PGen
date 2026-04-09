@@ -1,0 +1,110 @@
+[
+  {
+    "id": "meeting-summarizer",
+    "category": "work",
+    "platforms": ["Claude", "Gemini", "Cursor"],
+    "requiresMcp": false,
+    "rating": 4.8,
+    "installs": 1820,
+    "translations": {
+      "zh-TW": {
+        "title": "會議紀錄整理 Skill",
+        "summary": "把逐字稿轉成重點摘要、行動項目與責任分工。"
+      },
+      "en": {
+        "title": "Meeting Summarizer Skill",
+        "summary": "Turn transcripts into summary, action items, and owners."
+      }
+    }
+  },
+  {
+    "id": "email-rewriter",
+    "category": "work",
+    "platforms": ["Gemini", "OpenAI CLI", "Claude"],
+    "requiresMcp": false,
+    "rating": 4.6,
+    "installs": 1465,
+    "translations": {
+      "zh-TW": {
+        "title": "商務 Email 重寫 Skill",
+        "summary": "依對象與語氣規則，快速輸出可寄送的商務郵件版本。"
+      },
+      "en": {
+        "title": "Business Email Rewrite Skill",
+        "summary": "Generate send-ready emails with audience and tone constraints."
+      }
+    }
+  },
+  {
+    "id": "social-post-remix",
+    "category": "creative",
+    "platforms": ["Claude", "Gemini", "Windsurf"],
+    "requiresMcp": false,
+    "rating": 4.7,
+    "installs": 2012,
+    "translations": {
+      "zh-TW": {
+        "title": "社群貼文改寫 Skill",
+        "summary": "將長文轉為多平台貼文，並提供 Hook、CTA 與留言關鍵字。"
+      },
+      "en": {
+        "title": "Social Post Remix Skill",
+        "summary": "Convert long-form text into platform-native posts with hooks and CTA."
+      }
+    }
+  },
+  {
+    "id": "notion-research-sync",
+    "category": "technical",
+    "platforms": ["Claude", "Cursor", "OpenAI CLI"],
+    "requiresMcp": true,
+    "rating": 4.9,
+    "installs": 938,
+    "translations": {
+      "zh-TW": {
+        "title": "Notion 研究同步 Skill",
+        "summary": "透過 MCP 讀取知識庫，自動生成研究摘要與追蹤清單。"
+      },
+      "en": {
+        "title": "Notion Research Sync Skill",
+        "summary": "Use MCP to read workspace notes and generate research digests."
+      }
+    }
+  },
+  {
+    "id": "data-cleanup-assistant",
+    "category": "technical",
+    "platforms": ["Gemini", "OpenAI CLI", "Cursor"],
+    "requiresMcp": true,
+    "rating": 4.5,
+    "installs": 756,
+    "translations": {
+      "zh-TW": {
+        "title": "資料清理助手 Skill",
+        "summary": "針對 CSV/試算表做欄位標準化、缺漏檢查與品質報告。"
+      },
+      "en": {
+        "title": "Data Cleanup Assistant Skill",
+        "summary": "Normalize tabular data and produce data-quality checks."
+      }
+    }
+  },
+  {
+    "id": "learning-coach",
+    "category": "learning",
+    "platforms": ["Claude", "Gemini", "Cursor", "Windsurf"],
+    "requiresMcp": false,
+    "rating": 4.4,
+    "installs": 1672,
+    "translations": {
+      "zh-TW": {
+        "title": "學習教練 Skill",
+        "summary": "把大主題拆成學習路線，含提問模板與每週練習計畫。"
+      },
+      "en": {
+        "title": "Learning Coach Skill",
+        "summary": "Break large topics into a guided roadmap and practice loops."
+      }
+    }
+  }
+]

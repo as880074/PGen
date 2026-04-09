@@ -42,6 +42,10 @@ const MESSAGES = {
     skillCollectionTab: 'Skill 收集',
     skillCollectionPageTitle: 'Skill 收集頁',
     skillCollectionPageSubtitle: '探索 Agent Skill 介紹與分享網站規格草案',
+    loadingSkills: '正在載入 Skill 資料...',
+    loadSkillsFailed: '載入 Skill 資料失敗，請稍後再試',
+    emptySkillsTitle: '目前沒有可顯示的 Skill',
+    emptySkillsSubtitle: '請先新增 skills.json 內容',
   },
   en: {
     categories: {
@@ -79,6 +83,10 @@ const MESSAGES = {
     skillCollectionTab: 'Skill Collection',
     skillCollectionPageTitle: 'Skill Collection',
     skillCollectionPageSubtitle: 'Agent Skill overview and sharing platform draft',
+    loadingSkills: 'Loading skill data...',
+    loadSkillsFailed: 'Failed to load skill data. Please try again later.',
+    emptySkillsTitle: 'No skills available',
+    emptySkillsSubtitle: 'Please add entries to skills.json',
   },
 };
 

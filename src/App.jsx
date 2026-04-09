@@ -12,6 +12,7 @@ import {
 } from './i18n';
 
 const PROMPTS_JSON_PATH = `${import.meta.env.BASE_URL}prompts.json`;
+const SKILLS_JSON_PATH = `${import.meta.env.BASE_URL}skills.json`;
 
 function getNextPromptId(promptList) {
   if (promptList.length === 0) {
@@ -29,6 +30,9 @@ export default function App() {
   const [activePage, setActivePage] = useState('prompts');
   const [isLoadingPrompts, setIsLoadingPrompts] = useState(true);
   const [hasLoadPromptsError, setHasLoadPromptsError] = useState(false);
+  const [skills, setSkills] = useState([]);
+  const [isLoadingSkills, setIsLoadingSkills] = useState(true);
+  const [hasLoadSkillsError, setHasLoadSkillsError] = useState(false);
 
   const messages = useMemo(() => getMessages(locale), [locale]);
 
@@ -70,6 +74,46 @@ export default function App() {
     }
 
     loadPrompts();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadSkills() {
+      try {
+        setIsLoadingSkills(true);
+        setHasLoadSkillsError(false);
+
+        const response = await fetch(SKILLS_JSON_PATH);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid skill JSON format');
+        }
+
+        if (isActive) {
+          setSkills(data);
+        }
+      } catch {
+        if (isActive) {
+          setHasLoadSkillsError(true);
+          setSkills([]);
+        }
+      } finally {
+        if (isActive) {
+          setIsLoadingSkills(false);
+        }
+      }
+    }
+
+    loadSkills();
 
     return () => {
       isActive = false;
@@ -197,7 +241,22 @@ export default function App() {
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-8 py-6 space-y-5">
           {activePage === 'skills' ? (
-            <SkillCollectionPage locale={locale} />
+            isLoadingSkills ? (
+              <div className="text-center py-24 text-slate-400">
+                <p className="font-medium">{messages.loadingSkills}</p>
+              </div>
+            ) : hasLoadSkillsError ? (
+              <div className="text-center py-24 text-red-500">
+                <p className="font-medium">{messages.loadSkillsFailed}</p>
+              </div>
+            ) : skills.length === 0 ? (
+              <div className="text-center py-24 text-slate-400">
+                <p className="font-medium">{messages.emptySkillsTitle}</p>
+                <p className="text-sm mt-1">{messages.emptySkillsSubtitle}</p>
+              </div>
+            ) : (
+              <SkillCollectionPage locale={locale} skills={skills} />
+            )
           ) : (
             <>
               <AddPromptForm
