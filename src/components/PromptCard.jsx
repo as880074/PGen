@@ -1,6 +1,13 @@
 import { useState } from 'react';
 
-export default function PromptCard({ prompt, onDelete }) {
+export default function PromptCard({
+  prompt,
+  onDelete,
+  categoryLabel,
+  deleteTitle,
+  copyLabel,
+  copiedLabel,
+}) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -38,14 +45,14 @@ export default function PromptCard({ prompt, onDelete }) {
           <h3 className="font-semibold text-slate-800 text-base leading-snug truncate">
             {prompt.title}
           </h3>
-          <span className={`inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full capitalize ${badgeClass}`}>
-            {prompt.category}
+          <span className={`inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full ${badgeClass}`}>
+            {categoryLabel}
           </span>
         </div>
         <button
           onClick={onDelete}
           className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-400 transition-all text-lg leading-none mt-0.5"
-          title="Delete prompt"
+          title={deleteTitle}
         >
           ×
         </button>
@@ -68,14 +75,14 @@ export default function PromptCard({ prompt, onDelete }) {
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
             </svg>
-            Copied!
+            {copiedLabel}
           </>
         ) : (
           <>
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
-            Copy
+            {copyLabel}
           </>
         )}
       </button>

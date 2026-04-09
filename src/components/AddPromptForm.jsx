@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 const CATEGORIES = ['work', 'creative', 'technical', 'learning', 'other'];
 
-export default function AddPromptForm({ onAdd }) {
+export default function AddPromptForm({ onAdd, messages, categoryLabels }) {
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [category, setCategory] = useState('other');
@@ -29,7 +29,7 @@ export default function AddPromptForm({ onAdd }) {
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
-        Add a new prompt…
+        {messages.addPromptCta}
       </button>
     );
   }
@@ -40,7 +40,7 @@ export default function AddPromptForm({ onAdd }) {
       className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4"
     >
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-700">New Prompt</h2>
+        <h2 className="text-sm font-semibold text-slate-700">{messages.newPromptTitle}</h2>
         <button
           type="button"
           onClick={() => setIsOpen(false)}
@@ -52,26 +52,26 @@ export default function AddPromptForm({ onAdd }) {
 
       <div className="flex gap-3">
         <div className="flex-1">
-          <label className="block text-xs font-medium text-slate-500 mb-1">Title</label>
+          <label className="block text-xs font-medium text-slate-500 mb-1">{messages.titleLabel}</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Weekly standup summary"
+            placeholder={messages.titlePlaceholder}
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent placeholder:text-slate-300"
             autoFocus
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Category</label>
+          <label className="block text-xs font-medium text-slate-500 mb-1">{messages.categoryLabel}</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white capitalize"
+            className="px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white"
           >
             {CATEGORIES.map((c) => (
-              <option key={c} value={c} className="capitalize">
-                {c}
+              <option key={c} value={c}>
+                {categoryLabels[c] ?? c}
               </option>
             ))}
           </select>
@@ -79,11 +79,11 @@ export default function AddPromptForm({ onAdd }) {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-slate-500 mb-1">Prompt Text</label>
+        <label className="block text-xs font-medium text-slate-500 mb-1">{messages.promptTextLabel}</label>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Write your prompt here…"
+          placeholder={messages.promptTextPlaceholder}
           rows={4}
           className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent placeholder:text-slate-300 resize-none"
         />
@@ -95,14 +95,14 @@ export default function AddPromptForm({ onAdd }) {
           onClick={() => setIsOpen(false)}
           className="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
         >
-          Cancel
+          {messages.cancelLabel}
         </button>
         <button
           type="submit"
           className="px-4 py-2 text-sm font-semibold bg-violet-600 text-white rounded-lg hover:bg-violet-700 active:bg-violet-800 transition-colors disabled:opacity-50"
           disabled={!title.trim() || !text.trim()}
         >
-          Add Prompt
+          {messages.submitLabel}
         </button>
       </div>
     </form>

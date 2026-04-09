@@ -1,29 +1,51 @@
-# PGen – Prompt Manager
+# PGen – 提示詞管理器
 
-A clean, modern **Prompt Manager** web application built with **Vite**, **React**, and **Tailwind CSS**.
+這是一個使用 **Vite**、**React** 與 **Tailwind CSS** 建立的提示詞管理工具，提供簡潔的卡片式介面來管理、搜尋與新增常用提示詞。
 
-## Features
+## 功能特色
 
-- **Sidebar categories** – Filter prompts by category: All, Work, Creative, Technical, Learning, Other
-- **Prompt Cards** – Each card shows a title, category badge, and the full prompt text
-- **One-click Copy** – Copy any prompt to your clipboard instantly
-- **Add Prompts** – Collapsible form at the top to add new prompts with a title, text, and category
-- **Search** – Live search across prompt titles and text
-- **Delete** – Hover over any card and click × to remove it
-- 6 built-in sample prompts to get you started
+- **分類側邊欄**：可依全部、工作、創作、技術、學習、其他等分類快速篩選
+- **提示詞卡片**：顯示標題、分類與完整提示詞內容
+- **一鍵複製**：可直接把提示詞內容複製到剪貼簿
+- **新增提示詞**：可展開表單新增自訂提示詞
+- **即時搜尋**：可依標題與內容搜尋
+- **刪除功能**：可移除不需要的提示詞
+- **雙語切換**：內建繁體中文與英文切換
+- **內建範例**：包含 6 組預設提示詞，切換語系時會同步顯示對應語言內容
 
-## Getting Started
+## 執行方式
+
+先安裝依賴：
 
 ```bash
 npm install
+```
+
+啟動開發伺服器：
+
+```bash
 npm run dev
 ```
 
-Then open [http://localhost:5173](http://localhost:5173) in your browser.
+啟動後預設可在瀏覽器開啟 `http://localhost:5173`。
 
-## Build
+## 建置與預覽
+
+建立正式版本：
 
 ```bash
 npm run build
+```
+
+預覽建置結果：
+
+```bash
 npm run preview
 ```
+
+## 語系設計
+
+- 介面文字集中在 `src/i18n.js`
+- 預設提示詞也集中在 `src/i18n.js`
+- 預設提示詞會依語系切換顯示不同內容
+- 使用者自行新增的提示詞會保留原本輸入語言，不會在切換語系時被覆蓋
