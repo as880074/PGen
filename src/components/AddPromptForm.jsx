@@ -50,24 +50,24 @@ export default function AddPromptForm({ onAdd, messages, categoryLabels }) {
         </button>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
-          <label className="block text-xs font-medium text-slate-500 mb-1">{messages.titleLabel}</label>
+          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{messages.titleLabel}</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder={messages.titlePlaceholder}
-            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent placeholder:text-slate-300"
+            className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-violet-100 focus:border-violet-400 bg-slate-50 transition-all placeholder:text-slate-300"
             autoFocus
           />
         </div>
-        <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">{messages.categoryLabel}</label>
+        <div className="sm:w-48">
+          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{messages.categoryLabel}</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white"
+            className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-violet-100 focus:border-violet-400 bg-slate-50 transition-all cursor-pointer"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>

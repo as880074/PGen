@@ -552,19 +552,11 @@ export default function SkillCollectionPage({ locale, skills = [], onAddSkill, o
           </form>
         ) : null}
 
-        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={content.searchPlaceholder}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-200"
-          />
-
+        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-200"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none focus:ring-4 focus:ring-violet-100 focus:border-violet-400 transition-all cursor-pointer"
           >
             <option value="all">{content.categoryLabel}: {content.allOption}</option>
             {Object.keys(content.categories).map((key) => (
@@ -577,7 +569,7 @@ export default function SkillCollectionPage({ locale, skills = [], onAddSkill, o
           <select
             value={platform}
             onChange={(e) => setPlatform(e.target.value)}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-200"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none focus:ring-4 focus:ring-violet-100 focus:border-violet-400 transition-all cursor-pointer"
           >
             <option value="all">{content.platformLabel}: {content.allOption}</option>
             {platformOptions.map((item) => (
@@ -590,7 +582,7 @@ export default function SkillCollectionPage({ locale, skills = [], onAddSkill, o
           <select
             value={mcpFilter}
             onChange={(e) => setMcpFilter(e.target.value)}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-200"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none focus:ring-4 focus:ring-violet-100 focus:border-violet-400 transition-all cursor-pointer"
           >
             <option value="all">{content.mcpLabel}: {content.mcpAll}</option>
             <option value="required">{content.mcpLabel}: {content.mcpYes}</option>
