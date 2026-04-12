@@ -350,5 +350,21 @@
 				"text": "You are a prompt reverse engineer. Use a 4-step method to infer a reusable prompt from my favorite sample content.\n\nSample content: [paste]\nTraits to preserve: [tone/rhythm/structure/information density]\n\nSteps:\n1) Extract style features\n2) Convert features into actionable rules\n3) Generate the reverse prompt\n4) Provide a demo output + tuning suggestions\n\nThen provide an ultra-short mobile-friendly version."
 			}
 		}
+	},
+	{
+		"id": 23,
+		"type": "default",
+		"promptKey": "appScaffoldInitializer",
+		"category": "technical",
+		"translations": {
+			"zh-TW": {
+				"title": "APP 初始化建置 Prompt",
+				"text": "你是資深 React Native 與 Expo 架構師。請依照以下輸入，產生一份可直接執行的專案初始化方案，並包含必要的命令、檔案結構與範例程式骨架。\n\n專案名稱：[填入 ProjectName]\n目標平台：[iOS/Android/Web]\n核心功能：[地圖/登入/列表/評論/通知]\n團隊偏好：[TypeScript/狀態管理/UI 套件]\n部署目標：[內部測試/TestFlight/Google Play]\n\n請輸出：\n1) 技術棧建議（版本與理由）\n2) 初始化命令清單（安裝、設定、啟動）\n3) 建議目錄架構（含 app/、components/、store/、hooks/）\n4) app 初始化流程（環境變數、路由、Store Provider、啟動檢查）\n5) 最小可運行範例（含 1 個畫面 + 1 個 API 串接）\n6) 風險與檢查清單（相依性衝突、型別、權限、建置失敗排查）\n\n限制：\n- 保持 TypeScript 型別完整\n- API 層與 UI 顯示層分離\n- 先提供 MVP 路線，再給擴充建議"
+			},
+			"en": {
+				"title": "App Initialization Scaffolding Prompt",
+				"text": "You are a senior React Native and Expo architect. Based on the inputs below, generate an executable project initialization plan including commands, folder structure, and starter code skeletons.\n\nProject name: [ProjectName]\nTarget platforms: [iOS/Android/Web]\nCore features: [map/auth/list/reviews/notifications]\nTeam preferences: [TypeScript/state management/UI library]\nRelease target: [internal test/TestFlight/Google Play]\n\nOutput:\n1) Recommended stack (versions + reasons)\n2) Initialization command checklist (install, config, run)\n3) Suggested folder structure (including app/, components/, store/, hooks/)\n4) App bootstrap flow (env vars, routing, Store provider, startup checks)\n5) Minimum runnable sample (1 screen + 1 API integration)\n6) Risk and verification checklist (dependency conflicts, typing, permissions, build failures)\n\nConstraints:\n- Keep TypeScript types explicit\n- Separate API layer from UI presentation\n- Provide MVP path first, then expansion suggestions"
+			}
+		}
 	}
 ]
